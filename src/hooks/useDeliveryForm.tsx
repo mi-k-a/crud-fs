@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
-import { delivery } from "../types/types";
+import { Delivery } from "../types/types";
 
 export const useDeliveryForm = ({
   isEdit,
@@ -13,10 +13,10 @@ export const useDeliveryForm = ({
   isEdit: boolean;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
-  deliveries: delivery[];
-  setDeliveries: React.Dispatch<delivery[]>;
+  deliveries: Delivery[];
+  setDeliveries: React.Dispatch<Delivery[]>;
 }) => {
-  const formik = useFormik<delivery>({
+  const formik = useFormik<Delivery>({
     initialValues: {
       id: "",
       orderNumber: "",
@@ -28,9 +28,10 @@ export const useDeliveryForm = ({
     }),
 
     onSubmit: (values) => {
+      // "API"
       if (!isEdit) {
         if (deliveries) {
-          const updatedDeliveries = [
+          const addNewDelivery = [
             ...deliveries,
             {
               id: uuidv4(),
@@ -39,8 +40,8 @@ export const useDeliveryForm = ({
             },
           ];
 
-          setDeliveries(updatedDeliveries);
-          localStorage.setItem("deliveries", JSON.stringify(updatedDeliveries));
+          setDeliveries(addNewDelivery);
+          localStorage.setItem("deliveries", JSON.stringify(addNewDelivery));
         } else {
           localStorage.setItem("deliveries", JSON.stringify([values]));
           setDeliveries([values]);
@@ -48,7 +49,7 @@ export const useDeliveryForm = ({
       }
 
       if (isEdit) {
-        const updatedData = deliveries?.map((delivery: delivery) =>
+        const updatedDelivery = deliveries?.map((delivery: Delivery) =>
           delivery.id === values.id
             ? {
                 ...delivery,
@@ -57,8 +58,8 @@ export const useDeliveryForm = ({
               }
             : delivery
         );
-        localStorage.setItem("deliveries", JSON.stringify(updatedData));
-        setDeliveries(updatedData);
+        localStorage.setItem("deliveries", JSON.stringify(updatedDelivery));
+        setDeliveries(updatedDelivery);
       }
 
       formik.resetForm();

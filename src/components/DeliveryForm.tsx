@@ -1,12 +1,12 @@
 import { Button, Select, TextInput } from "@mantine/core";
 import { FormikProps } from "formik";
-import { delivery } from "../types/types";
+import { Delivery } from "../types/types";
 
-export const DeliveryForm = ({ formik }: { formik: FormikProps<delivery> }) => {
+export const DeliveryForm = ({ formik }: { formik: FormikProps<Delivery> }) => {
   enum StatusOptions {
-    DELIVERED = "Zugestellt",
-    PAID = "Bezahlt",
-    PAYMENT_OPEN = "Zahlung ausstehend",
+    DELIVERED = "Delivered",
+    PAID = "Paid",
+    PAYMENT_OPEN = "Payment Open",
   }
 
   const statusOptions = [
@@ -48,7 +48,7 @@ export const DeliveryForm = ({ formik }: { formik: FormikProps<delivery> }) => {
         }))}
       />
       <Button variant="light" mt={5} type="submit" color="teal">
-        senden
+        submit
       </Button>{" "}
     </form>
   );

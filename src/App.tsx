@@ -4,14 +4,21 @@ import { DeliveryModal } from "./components/DeliveryModal";
 import { DeliveriesTable } from "./components/DeliveriesTable";
 import { useDeliveryForm } from "./hooks/useDeliveryForm";
 import { DeliveryForm } from "./components/DeliveryForm";
-import { delivery } from "./types/types";
+import { Delivery, DeliveryContextValues } from "./types/types";
 
-export const DeliveriesContext = createContext<any>([]);
+export const DeliveryStateContext = createContext<DeliveryContextValues>({
+  isOpened: false,
+  setIsOpened: () => {},
+  isEdit: false,
+  setIsEdit: () => {},
+  deliveries: [],
+  setDeliveries: () => {},
+});
 
 function App() {
-  const [isOpened, setIsOpened] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [deliveries, setDeliveries] = useState<delivery[]>(
+  const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [deliveries, setDeliveries] = useState<Delivery[]>(
     JSON.parse(localStorage.getItem("deliveries") || "[]")
   );
 
@@ -23,17 +30,17 @@ function App() {
     setDeliveries,
   });
 
-  const globalState = [
+  const globalState: DeliveryContextValues = {
     isOpened,
     setIsOpened,
     isEdit,
     setIsEdit,
     deliveries,
     setDeliveries,
-  ];
+  };
 
   return (
-    <DeliveriesContext.Provider value={globalState}>
+    <DeliveryStateContext.Provider value={globalState}>
       <Container size="sm">
         <Flex gap="md" align="center" direction="column">
           <Image
@@ -41,11 +48,11 @@ function App() {
             pt={50}
             width={100}
             height="auto"
-            src="https://www.ehrenkind.de/wp-content/uploads/2020/02/Ehrenkind_Logo_lines_vertical_noMargin.svg"
+            src="https://www.shareicon.net/data/128x128/2016/10/25/847244_delivery_512x512.png"
           />
 
           <Text fz={30} align="center">
-            Lieferungen
+            Deliveries
           </Text>
 
           <Button
@@ -53,7 +60,7 @@ function App() {
             variant="light"
             onClick={() => setIsOpened(true)}
           >
-            Neue Lieferung hinzufügen
+            Add New Delivery
           </Button>
 
           <DeliveryModal formik={formik}>
@@ -63,11 +70,11 @@ function App() {
           {deliveries.length > 0 ? (
             <DeliveriesTable formik={formik} />
           ) : (
-            <Text> Noch keine Lieferungen vorhanden</Text>
+            <Text> No deliveries yet</Text>
           )}
         </Flex>
       </Container>
-    </DeliveriesContext.Provider>
+    </DeliveryStateContext.Provider>
   );
 }
 

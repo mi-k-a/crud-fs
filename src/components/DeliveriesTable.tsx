@@ -1,19 +1,16 @@
 import { Button, Flex, Table } from "@mantine/core";
 import { useContext } from "react";
-import { delivery } from "../types/types";
+import { Delivery } from "../types/types";
 import { FormikProps } from "formik";
-import { DeliveriesContext } from "../App";
+import { DeliveryStateContext } from "../App";
 
 export const DeliveriesTable = ({
   formik,
 }: {
-  formik: FormikProps<delivery>;
+  formik: FormikProps<Delivery>;
 }) => {
-  const [isOpened, setIsOpened, isEdit, setIsEdit, deliveries, setDeliveries] =
-    useContext(DeliveriesContext);
-
-  console.log(deliveries, "Context test");
-  console.log(setIsOpened, "setIsOpened test");
+  const { setIsOpened, setIsEdit, deliveries, setDeliveries } =
+    useContext(DeliveryStateContext);
 
   return (
     <Table striped>
@@ -25,7 +22,7 @@ export const DeliveriesTable = ({
         </tr>
       </thead>
       <tbody>
-        {deliveries?.map((delivery: delivery) => (
+        {deliveries?.map((delivery: Delivery) => (
           <tr key={delivery.id}>
             <td width={250}>{delivery.orderNumber}</td>
             <td>{delivery.status}</td>
@@ -51,15 +48,15 @@ export const DeliveriesTable = ({
                 </Button>
                 <Button
                   onClick={() => {
-                    const filteredArr = deliveries.filter(
-                      (elm: delivery) => elm.id !== delivery.id
+                    const filteredDeliveriesArr = deliveries.filter(
+                      (elm: Delivery) => elm.id !== delivery.id
                     );
 
                     localStorage.setItem(
                       "deliveries",
-                      JSON.stringify(filteredArr)
+                      JSON.stringify(filteredDeliveriesArr)
                     );
-                    setDeliveries(filteredArr);
+                    setDeliveries(filteredDeliveriesArr);
                   }}
                   color="red"
                   variant="light"
