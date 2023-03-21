@@ -1,10 +1,11 @@
 import { Button, Container, Flex, Text, Image } from "@mantine/core";
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import { DeliveryModal } from "./components/DeliveryModal";
 import { DeliveriesTable } from "./components/DeliveriesTable";
 import { useDeliveryForm } from "./hooks/useDeliveryForm";
 import { DeliveryForm } from "./components/DeliveryForm";
 import { Delivery, DeliveryContextValues } from "./types/types";
+import axios from "axios";
 
 export const DeliveryStateContext = createContext<DeliveryContextValues>({
   isOpened: false,
@@ -21,6 +22,15 @@ function App() {
   const [deliveries, setDeliveries] = useState<Delivery[]>(
     JSON.parse(localStorage.getItem("deliveries") || "[]")
   );
+
+  useEffect(() => {
+    getDeliveries();
+  }, [deliveries, setDeliveries]);
+
+  const getDeliveries = async () => {
+    const { data } = await axios.get("http://localhost:3004/deliveries");
+    setDeliveries(data);
+  };
 
   const formik = useDeliveryForm({
     isEdit,

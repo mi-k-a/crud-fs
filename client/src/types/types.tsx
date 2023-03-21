@@ -1,5 +1,5 @@
 export type Delivery = {
-  id: string;
+  _id: string;
   orderNumber: string;
   status: string;
 };

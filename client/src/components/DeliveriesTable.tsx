@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { Delivery } from "../types/types";
 import { FormikProps } from "formik";
 import { DeliveryStateContext } from "../App";
+import axios from "axios";
 
 export const DeliveriesTable = ({
   formik,
@@ -23,7 +24,7 @@ export const DeliveriesTable = ({
       </thead>
       <tbody>
         {deliveries?.map((delivery: Delivery) => (
-          <tr key={delivery.id}>
+          <tr key={delivery._id}>
             <td width={250}>{delivery.orderNumber}</td>
             <td>{delivery.status}</td>
             <td width={150}>
@@ -35,7 +36,7 @@ export const DeliveriesTable = ({
 
                     // prepopulate edit form with values
                     formik.setValues({
-                      id: delivery.id,
+                      _id: delivery._id,
                       orderNumber: delivery.orderNumber,
                       status: delivery.status,
                     });
@@ -47,16 +48,10 @@ export const DeliveriesTable = ({
                   Edit
                 </Button>
                 <Button
-                  onClick={() => {
-                    const filteredDeliveriesArr = deliveries.filter(
-                      (elm: Delivery) => elm.id !== delivery.id
+                  onClick={async () => {
+                    await axios.delete(
+                      `http://localhost:3004/deliveries/${delivery._id}`
                     );
-
-                    localStorage.setItem(
-                      "deliveries",
-                      JSON.stringify(filteredDeliveriesArr)
-                    );
-                    setDeliveries(filteredDeliveriesArr);
                   }}
                   color="red"
                   variant="light"

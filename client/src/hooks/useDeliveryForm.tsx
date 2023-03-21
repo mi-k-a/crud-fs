@@ -2,6 +2,7 @@ import { useFormik } from "formik";
 import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
 import { Delivery } from "../types/types";
+import axios from "axios";
 
 export const useDeliveryForm = ({
   isEdit,
@@ -18,7 +19,7 @@ export const useDeliveryForm = ({
 }) => {
   const formik = useFormik<Delivery>({
     initialValues: {
-      id: "",
+      _id: "",
       orderNumber: "",
       status: "",
     },
@@ -27,21 +28,16 @@ export const useDeliveryForm = ({
       status: Yup.string().required("Required"),
     }),
 
-    onSubmit: (values) => {
-      // "API"
+    onSubmit: async (values) => {
       if (!isEdit) {
         if (deliveries) {
-          const addNewDelivery = [
-            ...deliveries,
-            {
-              id: uuidv4(),
-              orderNumber: values.orderNumber,
-              status: values.status,
-            },
-          ];
+          const newDelivery = {
+            id: uuidv4(),
+            orderNumber: values.orderNumber,
+            status: values.status,
+          };
 
-          setDeliveries(addNewDelivery);
-          localStorage.setItem("deliveries", JSON.stringify(addNewDelivery));
+          await axios.post("http://localhost:3004/deliveries", newDelivery);
         } else {
           localStorage.setItem("deliveries", JSON.stringify([values]));
           setDeliveries([values]);
@@ -49,17 +45,16 @@ export const useDeliveryForm = ({
       }
 
       if (isEdit) {
-        const updatedDelivery = deliveries?.map((delivery: Delivery) =>
-          delivery.id === values.id
-            ? {
-                ...delivery,
-                orderNumber: values.orderNumber,
-                status: values.status,
-              }
-            : delivery
+        const updatedDelivery = {
+          _id: values._id,
+          orderNumber: values.orderNumber,
+          status: values.status,
+        };
+
+        await axios.patch(
+          `http://localhost:3004/deliveries/${updatedDelivery._id}`,
+          updatedDelivery
         );
-        localStorage.setItem("deliveries", JSON.stringify(updatedDelivery));
-        setDeliveries(updatedDelivery);
       }
 
       formik.resetForm();
